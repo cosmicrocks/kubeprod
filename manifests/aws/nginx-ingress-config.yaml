@@ -1,0 +1,15 @@
+apiVersion: v1
+data:
+  disable-ipv6: "false"
+  enable-vts-status: "true"
+  hsts: "true"
+  no-auth-locations: /.well-known/acme-challenge,/oauth2
+  proxy-connect-timeout: "15"
+  proxy-protocol: "True"
+  real-ip-header: proxy_protocol
+kind: ConfigMap
+metadata:
+  labels:
+    name: nginx-ingress
+  name: nginx-ingress
+  namespace: kubeprod

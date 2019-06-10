@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: cert-manager
+  name: cert-manager
+  namespace: kubeprod
+spec:
+  minReadySeconds: 30
+  replicas: 1
+  selector:
+    matchLabels:
+      name: cert-manager
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9402"
+        prometheus.io/scrape: "true"
+      labels:
+        name: cert-manager
+    spec:
+      containers:
+      - args:
+        - --cluster-resource-namespace=$(POD_NAMESPACE)
+        - --default-issuer-kind=ClusterIssuer
+        - --default-issuer-name=letsencrypt-prod
+        - --leader-election-namespace=$(POD_NAMESPACE)
+        env:
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+        image: bitnami/cert-manager:0.7.2-r2
+        imagePullPolicy: IfNotPresent
+        name: cert-manager
+        ports:
+        - containerPort: 9402
+          name: prometheus
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+        stdin: false
+        tty: false
+        volumeMounts: []
+      imagePullSecrets: []
+      initContainers: []
+      serviceAccountName: cert-manager
+      terminationGracePeriodSeconds: 30
+      volumes: []

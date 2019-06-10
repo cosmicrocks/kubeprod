@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  labels:
+    name: oauth2-ingress
+  name: oauth2-ingress
+  namespace: kubeprod
+spec:
+  rules:
+  - host: auth.cosmic.rocks
+    http:
+      paths:
+      - backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180
+        path: /oauth2/
+      - backend:
+          serviceName: oauth2-proxy
+          servicePort: 4180
+        path: /
+  tls:
+  - hosts:
+    - auth.cosmic.rocks
+    secretName: oauth2-ingress-tls

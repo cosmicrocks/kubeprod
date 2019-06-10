@@ -1,0 +1,61 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: external-dns
+  name: external-dns
+  namespace: kubeprod
+spec:
+  minReadySeconds: 30
+  replicas: 1
+  selector:
+    matchLabels:
+      name: external-dns
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "7979"
+        prometheus.io/scrape: "true"
+      labels:
+        name: external-dns
+    spec:
+      containers:
+      - args:
+        - --domain-filter=cosmic.rocks
+        - --provider=digitalocean
+        - --registry=txt
+        - --txt-owner-id=cosmic.rocks
+        - --txt-prefix=_externaldns.
+        - --source=service
+        - --source=ingress
+        env:
+        - name: DO_TOKEN
+          value: ""
+        image: bitnami/external-dns:0.5.14-r0
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: metrics
+        name: external-dns
+        ports:
+        - containerPort: 7979
+          name: metrics
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: metrics
+        stdin: false
+        tty: false
+        volumeMounts: []
+      imagePullSecrets: []
+      initContainers: []
+      serviceAccountName: external-dns
+      terminationGracePeriodSeconds: 30
+      volumes: []
