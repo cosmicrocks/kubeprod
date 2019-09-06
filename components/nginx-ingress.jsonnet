@@ -52,12 +52,12 @@ local NGNIX_INGRESS_IMAGE = (import "images.json")["nginx-ingress-controller"];
         verbs: ["get", "list", "watch"],
       },
       {
-        apiGroups: ["extensions"],
+        apiGroups: ["extensions", "networking.k8s.io"],
         resources: ["ingresses"],
         verbs: ["get", "list", "watch"],
       },
       {
-        apiGroups: ["extensions"],
+        apiGroups: ["extensions", "networking.k8s.io"],
         resources: ["ingresses/status"],
         verbs: ["update"],
       },
