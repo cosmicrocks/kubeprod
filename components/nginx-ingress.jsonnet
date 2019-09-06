@@ -168,6 +168,7 @@ local NGNIX_INGRESS_IMAGE = (import "images.json")["nginx-ingress-controller"];
                 POD_NAME: kube.FieldRef("metadata.name"),
                 POD_NAMESPACE: kube.FieldRef("metadata.namespace"),
               },
+              extra_args+: ["/nginx-ingress-controller"],
               args_+: {
                 local fqname(o) = "%s/%s" % [o.metadata.namespace, o.metadata.name],
                 configmap: fqname($.config),
@@ -177,6 +178,7 @@ local NGNIX_INGRESS_IMAGE = (import "images.json")["nginx-ingress-controller"];
                 "tcp-services-configmap": fqname($.tcpconf),
                 "udp-services-configmap": fqname($.udpconf),
                 "ingress-class": "nginx",
+                "annotations-prefix": "nginx.ingress.kubernetes.io",
               },
               ports_: {
                 http: {containerPort: 80},

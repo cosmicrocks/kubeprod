@@ -166,8 +166,9 @@
     env_:: {},
     env: self.envList(self.env_),
 
+    extra_args:: [],
     args_:: {},
-    args: ["--%s=%s" % kv for kv in $.objectItems(self.args_)],
+    args: self.extra_args + [ "--%s=%s" % kv for kv in $.objectItems(self.args_)],
 
     ports_:: {},
     ports: $.mapToNamedList(self.ports_),
