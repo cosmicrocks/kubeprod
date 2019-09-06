@@ -158,7 +158,8 @@ local NGNIX_INGRESS_IMAGE = (import "images.json")["nginx-ingress-controller"];
             default: kube.Container("nginx") {
               image: NGNIX_INGRESS_IMAGE,
               securityContext: {
-                runAsUser: 1001,
+                allowPrivilegeEscalation: true,
+                runAsUser: 33,
                 capabilities: {
                   drop: ["ALL"],
                   add: ["NET_BIND_SERVICE"],
