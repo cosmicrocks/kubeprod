@@ -207,10 +207,13 @@ local CERT_MANAGER_IMAGE = (import "images.json")["cert-manager"];
             default: kube.Container("cert-manager") {
               image: CERT_MANAGER_IMAGE,
               args_+: {
+                "v": "2",
                 "cluster-resource-namespace": "$(POD_NAMESPACE)",
                 "leader-election-namespace": "$(POD_NAMESPACE)",
-                "default-issuer-name": $.letsencrypt_environments[$.letsencrypt_environment],
-                "default-issuer-kind": "ClusterIssuer",
+                "webhook-namespace": "$(POD_NAMESPACE)",
+                "webhook-ca-secret": "cert-manager-webhook-ca",
+                "webhook-serving-secret": "cert-manager-webhook-tls",
+                "webhook-dns-names": "cert-manager-webhook,cert-manager-webhook.cert-manager,cert-manager-webhook.cert-manager.svc"
               },
               env_+: {
                 POD_NAMESPACE: kube.FieldRef("metadata.namespace"),
